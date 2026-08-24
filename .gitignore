@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+build/
+dist/
+
+# Environment / secrets
+.env
+
+# Data & model weights (large binary files don't belong in git)
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+models/*
+!models/.gitkeep
+
+# Editor/OS
+.vscode/
+.idea/
+.DS_Store
+
+# Notebook checkpoints
+.ipynb_checkpoints/

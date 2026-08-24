@@ -1,0 +1,14 @@
+# Settings the detection pipeline will read at startup.
+# Kept empty for now — we'll add real settings (thresholds, model paths, camera
+# parameters) as each detector gets built out.
+
+video:
+  source: null
+
+detectors:
+  rip_currents: true
+  marine_life: true
+  swimmer_distress: true
+  isolated_swimmers: true
+  vessel_encroachment: true
+  water_quality: true
