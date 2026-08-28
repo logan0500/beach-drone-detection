@@ -44,7 +44,7 @@ pip install -r requirements.txt
 | Isolated swimmers | Trained model wired in (`swimmer-multiclass-best.pt`), distance-based isolation logic on top |
 | Swimmer distress | Trained model wired in (`swimmer-distress-best.pt`) — **not yet validated**, treat "drowning" alerts as needing human confirmation |
 | Vessel encroachment | Reuses `swimmer-multiclass-best.pt`'s boat/jetski classes; geofencing needs a real swim-zone polygon (`configs/default.yaml`) before it flags anything |
-| Water quality / algal blooms | Not started — no model, planned as classical HSV color-thresholding rather than a trained model |
+| Water quality / algal blooms | No trained model (thin/inconsistent datasets) — classical HSV color thresholding instead. Untuned placeholder ranges; expect false positives until checked against real bloom footage |
 
 Model weight files go in `models/` (gitignored — not committed; copy them in
 locally, they aren't tracked here).

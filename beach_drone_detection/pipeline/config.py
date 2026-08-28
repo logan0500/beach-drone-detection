@@ -7,6 +7,7 @@ from beach_drone_detection.detectors.marine_life import MarineLifeDetector
 from beach_drone_detection.detectors.rip_currents import RipCurrentDetector
 from beach_drone_detection.detectors.swimmer_distress import SwimmerDistressDetector
 from beach_drone_detection.detectors.vessel_encroachment import VesselEncroachmentDetector
+from beach_drone_detection.detectors.water_quality import WaterQualityDetector
 
 DETECTOR_CLASSES = {
     "rip_current": RipCurrentDetector,
@@ -14,7 +15,7 @@ DETECTOR_CLASSES = {
     "swimmer_distress": SwimmerDistressDetector,
     "isolated_swimmer": IsolatedSwimmerDetector,
     "vessel_encroachment": VesselEncroachmentDetector,
-    # "water_quality" has no working detector yet - omitted on purpose.
+    "water_quality": WaterQualityDetector,
 }
 
 
@@ -44,6 +45,11 @@ def build_detectors(config: dict) -> dict:
             detector.isolation_distance_px = cfg["isolation_distance_px"]
         if name == "vessel_encroachment" and cfg.get("swim_zone_polygon"):
             detector.swim_zone_polygon = cfg["swim_zone_polygon"]
+        if name == "water_quality":
+            if cfg.get("hsv_ranges"):
+                detector.hsv_ranges = [tuple(map(tuple, r)) for r in cfg["hsv_ranges"]]
+            if "min_area_px" in cfg:
+                detector.min_area_px = cfg["min_area_px"]
 
         detectors[name] = detector
     return detectors

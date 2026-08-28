@@ -41,7 +41,15 @@ detectors:
     swim_zone_polygon: null
 
   water_quality:
-    enabled: false  # no trained model / detection logic yet
+    enabled: true
+    # No trained model — classical HSV color thresholding for bloom-colored
+    # regions instead. Untuned placeholders; expect false positives (foam,
+    # glare, ordinary shallow-water color) until checked against real
+    # bloom footage. hsv_ranges is a list of [[h,s,v], [h,s,v]] (low, high)
+    # bounds in OpenCV's H 0-179 / S,V 0-255 convention.
+    hsv_ranges:
+      - [[35, 60, 60], [85, 255, 255]]  # green / green-yellow scum
+    min_area_px: 400
 
 display:
   # Colors are BGR (OpenCV convention). Per-class colors override the
@@ -57,3 +65,4 @@ display:
       boat: [0, 165, 255]             # orange
       jetski: [0, 140, 255]           # dark orange
       vessel_encroachment: [0, 0, 255] # red, once flagged as encroaching
+    water_quality: [0, 255, 0]        # green outline around flagged bloom regions
