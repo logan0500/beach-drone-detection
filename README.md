@@ -63,3 +63,20 @@ python scripts/run_on_video.py path/to/flight.mp4 -o output.mp4
 
 Both read detector settings (which model, confidence threshold, isolation
 distance, swim-zone polygon) from `configs/default.yaml`.
+
+## Validation
+
+None of the 4 trained models have been checked against a real labeled test
+set yet — only against random/synthetic frames while wiring up the
+pipeline. Before trusting a detector (especially `swimmer_distress`, which
+is flagged as unvalidated), score it against a held-out labeled test set:
+
+```bash
+python scripts/validate_model.py --list
+python scripts/validate_model.py swimmer_distress --data path/to/test_set/data.yaml
+```
+
+The test set needs ground-truth labels, not just images — export a "test"
+split (held out of training) from the same Roboflow project in "YOLOv8"
+format, which gives you the `data.yaml` this expects. The script reports
+precision/recall/mAP per class and can save a JSON report with `--report`.

@@ -24,3 +24,7 @@ models/*
 
 # Notebook checkpoints
 .ipynb_checkpoints/
+
+# Ultralytics run output (validation/prediction artifacts, cache files)
+runs/
+*.cache
