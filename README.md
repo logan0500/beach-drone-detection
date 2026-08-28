@@ -37,5 +37,29 @@ pip install -r requirements.txt
 
 ## Status
 
-Scaffolding only — detector modules are stubs (`NotImplementedError`) that
-define the shape each detection task will take. No libraries installed yet.
+| Detector | Status |
+|---|---|
+| Sharks & marine life | Trained model wired in (`shark-best.pt`) |
+| Rip currents | Trained model wired in (`rip-best.pt`) |
+| Isolated swimmers | Trained model wired in (`swimmer-multiclass-best.pt`), distance-based isolation logic on top |
+| Swimmer distress | Trained model wired in (`swimmer-distress-best.pt`) — **not yet validated**, treat "drowning" alerts as needing human confirmation |
+| Vessel encroachment | Reuses `swimmer-multiclass-best.pt`'s boat/jetski classes; geofencing needs a real swim-zone polygon (`configs/default.yaml`) before it flags anything |
+| Water quality / algal blooms | Not started — no model, planned as classical HSV color-thresholding rather than a trained model |
+
+Model weight files go in `models/` (gitignored — not committed; copy them in
+locally, they aren't tracked here).
+
+Run on a single image:
+
+```bash
+python scripts/run_on_image.py path/to/frame.jpg -o output.jpg
+```
+
+Run on a video, frame by frame:
+
+```bash
+python scripts/run_on_video.py path/to/flight.mp4 -o output.mp4
+```
+
+Both read detector settings (which model, confidence threshold, isolation
+distance, swim-zone polygon) from `configs/default.yaml`.

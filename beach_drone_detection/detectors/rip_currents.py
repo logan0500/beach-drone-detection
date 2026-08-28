@@ -1,10 +1,13 @@
-"""Detects rip currents from top-down video (texture/color pattern analysis)."""
+"""Detects rip currents from top-down video.
 
-from beach_drone_detection.detectors.base import BaseDetector, Detection
+The source Roboflow dataset never named its single class, so the model
+reports it as "0" rather than "rip_current" — cosmetic, not a bug.
+"""
+
+from beach_drone_detection.detectors.yolo_base import YoloDetector
 
 
-class RipCurrentDetector(BaseDetector):
+class RipCurrentDetector(YoloDetector):
     name = "rip_current"
-
-    def detect(self, frame) -> list[Detection]:
-        raise NotImplementedError
+    model_path = "models/rip-best.pt"
+    conf_threshold = 0.4

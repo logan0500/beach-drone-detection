@@ -1,14 +1,59 @@
-# Settings the detection pipeline will read at startup.
-# Kept empty for now — we'll add real settings (thresholds, model paths, camera
-# parameters) as each detector gets built out.
+# Settings the detection pipeline reads at startup.
 
 video:
   source: null
 
 detectors:
-  rip_currents: true
-  marine_life: true
-  swimmer_distress: true
-  isolated_swimmers: true
-  vessel_encroachment: true
-  water_quality: true
+  rip_current:
+    enabled: true
+    model_path: models/rip-best.pt
+    conf_threshold: 0.4
+
+  marine_life:
+    enabled: true
+    model_path: models/shark-best.pt
+    conf_threshold: 0.4
+
+  swimmer_distress:
+    enabled: true
+    model_path: models/swimmer-distress-best.pt
+    conf_threshold: 0.4
+    # Trained but not yet validated against real test footage — treat
+    # "drowning" alerts as needing human confirmation, not ground truth.
+    validated: false
+
+  isolated_swimmer:
+    enabled: true
+    model_path: models/swimmer-multiclass-best.pt
+    conf_threshold: 0.35
+    # Pixel distance beyond which a swimmer counts as isolated. Placeholder —
+    # tune once real drone altitude/camera specs are known.
+    isolation_distance_px: 150
+
+  vessel_encroachment:
+    enabled: true
+    model_path: models/swimmer-multiclass-best.pt
+    conf_threshold: 0.35
+    # List of [x, y] pixel points defining the swimmer-only zone. Leave null
+    # until a real swim zone is defined for the deployment camera view —
+    # with no polygon, vessels are still detected but never flagged as
+    # encroaching.
+    swim_zone_polygon: null
+
+  water_quality:
+    enabled: false  # no trained model / detection logic yet
+
+display:
+  # Colors are BGR (OpenCV convention). Per-class colors override the
+  # detector-level color for models with multiple classes.
+  colors:
+    rip_current: [0, 255, 255]        # yellow
+    marine_life: [0, 0, 255]          # red
+    swimmer_distress:
+      drowning: [0, 0, 255]           # red
+      swimming: [0, 200, 0]           # green
+    isolated_swimmer: [0, 0, 255]     # red
+    vessel_encroachment:
+      boat: [0, 165, 255]             # orange
+      jetski: [0, 140, 255]           # dark orange
+      vessel_encroachment: [0, 0, 255] # red, once flagged as encroaching

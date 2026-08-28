@@ -1,10 +1,9 @@
 """Detects sharks and other marine life from top-down video."""
 
-from beach_drone_detection.detectors.base import BaseDetector, Detection
+from beach_drone_detection.detectors.yolo_base import YoloDetector
 
 
-class MarineLifeDetector(BaseDetector):
+class MarineLifeDetector(YoloDetector):
     name = "marine_life"
-
-    def detect(self, frame) -> list[Detection]:
-        raise NotImplementedError
+    model_path = "models/shark-best.pt"
+    conf_threshold = 0.4
