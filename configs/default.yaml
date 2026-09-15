@@ -22,6 +22,21 @@ detectors:
     # "drowning" alerts as needing human confirmation, not ground truth.
     validated: false
 
+  swimmer_distress_motion:
+    enabled: true
+    model_path: models/swimmer-multiclass-best.pt
+    conf_threshold: 0.35
+    # Complementary heuristic (no trained model) — flags swimmers who go
+    # still after moving, or move erratically, using position history
+    # rather than a single-frame pose classifier. Cross-check against
+    # swimmer_distress, don't treat alone as ground truth. Frame counts
+    # below assume ~30fps footage; rescale if yours differs.
+    stillness_window: 30
+    stillness_threshold_px: 15
+    active_movement_px: 40
+    erratic_window: 10
+    erratic_reversal_count: 4
+
   isolated_swimmer:
     enabled: true
     model_path: models/swimmer-multiclass-best.pt
@@ -66,3 +81,4 @@ display:
       jetski: [0, 140, 255]           # dark orange
       vessel_encroachment: [0, 0, 255] # red, once flagged as encroaching
     water_quality: [0, 255, 0]        # green outline around flagged bloom regions
+    swimmer_distress_motion: [255, 0, 128]  # purple, distinct from the trained model's red

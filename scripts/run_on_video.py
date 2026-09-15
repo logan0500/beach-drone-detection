@@ -41,7 +41,12 @@ def main():
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
     writer = cv2.VideoWriter(args.output, fourcc, fps, (width, height))
 
-    totals = {"isolated_swimmers": 0, "drowning_alerts": 0, "vessel_encroachments": 0}
+    totals = {
+        "isolated_swimmers": 0,
+        "drowning_alerts": 0,
+        "vessel_encroachments": 0,
+        "possible_distress_motion_flags": 0,
+    }
     frames_with_drowning_alert = 0
     frame_count = 0
 
@@ -65,6 +70,7 @@ def main():
     print(f"\nProcessed {frame_count} frames")
     print(f"Isolated-swimmer detections across video: {totals['isolated_swimmers']}")
     print(f"Vessel-encroachment detections across video: {totals['vessel_encroachments']}")
+    print(f"Possible-distress motion flags across video: {totals['possible_distress_motion_flags']}")
     print(f"Frames with a drowning alert: {frames_with_drowning_alert}")
     if frames_with_drowning_alert > 0:
         print(

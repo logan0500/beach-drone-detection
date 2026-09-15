@@ -26,8 +26,10 @@ class Pipeline:
             d for d in detections_by_detector.get("vessel_encroachment", [])
             if d.extra.get("in_swim_zone")
         ]
+        possible_distress = detections_by_detector.get("swimmer_distress_motion", [])
         return {
             "isolated_swimmers": len(isolated),
             "drowning_alerts": len(drowning),
             "vessel_encroachments": len(encroaching),
+            "possible_distress_motion_flags": len(possible_distress),
         }

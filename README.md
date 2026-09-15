@@ -42,7 +42,7 @@ pip install -r requirements.txt
 | Sharks & marine life | Trained model wired in (`shark-best.pt`) |
 | Rip currents | Trained model wired in (`rip-best.pt`) |
 | Isolated swimmers | Trained model wired in (`swimmer-multiclass-best.pt`), distance-based isolation logic on top |
-| Swimmer distress | Trained model wired in (`swimmer-distress-best.pt`) — **not yet validated**, treat "drowning" alerts as needing human confirmation |
+| Swimmer distress | Trained model wired in (`swimmer-distress-best.pt`) — **not yet validated**, treat "drowning" alerts as needing human confirmation. Cross-checked by `swimmer_distress_motion`, a heuristic (no model) that flags a swimmer going still after moving, or moving erratically, using position history across frames — also unvalidated, video-only |
 | Vessel encroachment | Reuses `swimmer-multiclass-best.pt`'s boat/jetski classes; geofencing needs a real swim-zone polygon (`configs/default.yaml`) before it flags anything |
 | Water quality / algal blooms | No trained model (thin/inconsistent datasets) — classical HSV color thresholding instead. Untuned placeholder ranges; expect false positives until checked against real bloom footage |
 
