@@ -82,6 +82,11 @@ def main():
     parser.add_argument("--config", default="configs/default.yaml", help="Pipeline config to read model paths/thresholds from")
     parser.add_argument("--list", action="store_true", help="List available model names and exit")
     parser.add_argument("--report", default=None, help="Optional path to save a JSON report")
+    parser.add_argument(
+        "--plots", action="store_true",
+        help="Also save a confusion matrix and precision-recall curves to runs/detect/val* "
+             "(aggregate mAP can hide which specific classes/conditions are failing)",
+    )
     args = parser.parse_args()
 
     config = load_config(args.config)
@@ -107,7 +112,10 @@ def main():
 
     model = YOLO(info["path"])
     print(f"Validating {info['path']} against {args.data} (conf={conf})...\n")
-    metrics = model.val(data=args.data, conf=conf, split="test", plots=False, save_json=False)
+    metrics = model.val(data=args.data, conf=conf, split="test", plots=args.plots, save_json=False)
+
+    if args.plots:
+        print(f"Confusion matrix + PR curves saved under: {metrics.save_dir}")
 
     rows = metrics.summary()
     overall = {
