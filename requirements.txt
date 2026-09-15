@@ -4,4 +4,5 @@
 ultralytics       # loads/runs the trained YOLO detector models (.pt files)
 opencv-python-headless  # video/image I/O and drawing; headless since this runs on a drone/server, no display
 PyYAML            # reads configs/default.yaml
+Flask             # serves the operator dashboard (webapp/)
 

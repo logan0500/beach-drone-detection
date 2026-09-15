@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Halo Drone — Operator Dashboard</title>
+<style>
+  :root {
+    --bg: #0b0f14;
+    --panel: #131a22;
+    --border: #223041;
+    --text: #e6edf3;
+    --muted: #8b98a5;
+    --critical: #ef4444;
+    --high: #f59e0b;
+    --medium: #eab308;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  header {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  header h1 { font-size: 16px; margin: 0; font-weight: 600; }
+  #conn-status { font-size: 12px; color: var(--muted); }
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 16px;
+    padding: 16px;
+  }
+  @media (max-width: 900px) {
+    .layout { grid-template-columns: 1fr; }
+  }
+  .video-panel {
+    background: #000;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    position: relative;
+    min-height: 200px;
+  }
+  .video-panel img { width: 100%; display: block; }
+  .sim-badge {
+    position: absolute; top: 10px; left: 10px;
+    background: rgba(0,0,0,0.6);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 11px;
+    padding: 4px 8px;
+    border-radius: 6px;
+  }
+  .source-error {
+    color: var(--critical);
+    font-size: 13px;
+    padding: 20px;
+  }
+  .controls {
+    margin-top: 12px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+  }
+  .controls h2, .alerts-panel h2 {
+    font-size: 12px; margin: 0 0 10px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: .04em;
+  }
+  .pad {
+    display: grid;
+    grid-template-columns: repeat(3, 48px);
+    grid-template-rows: repeat(3, 48px);
+    gap: 6px;
+    justify-content: center;
+  }
+  .pad button, .flight-btn {
+    background: #1c2530;
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+  }
+  .pad button:hover, .flight-btn:hover { background: #26313e; }
+  .flight-row { display: flex; gap: 8px; margin-top: 10px; }
+  .flight-btn { flex: 1; padding: 10px; font-size: 13px; }
+  .note { font-size: 11px; color: var(--muted); margin-top: 10px; line-height: 1.4; }
+  .alerts-panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: calc(100vh - 140px);
+    overflow-y: auto;
+  }
+  .empty { color: var(--muted); font-size: 13px; padding: 20px 0; text-align: center; }
+  .alert-card {
+    border: 1px solid var(--border);
+    border-left-width: 4px;
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: #0f151c;
+  }
+  .alert-card.critical { border-left-color: var(--critical); }
+  .alert-card.high { border-left-color: var(--high); }
+  .alert-card.medium { border-left-color: var(--medium); }
+  .alert-top { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .alert-name { font-weight: 600; font-size: 14px; }
+  .level-chip {
+    font-size: 10px;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .level-chip.critical { background: rgba(239,68,68,.15); color: var(--critical); }
+  .level-chip.high { background: rgba(245,158,11,.15); color: var(--high); }
+  .level-chip.medium { background: rgba(234,179,8,.15); color: var(--medium); }
+  .alert-meta { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .alert-disclaimer { font-size: 11px; color: var(--muted); margin-top: 6px; border-top: 1px solid var(--border); padding-top: 6px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Halo Drone — Operator Dashboard</h1>
+  <span id="conn-status">connecting…</span>
+</header>
+
+<div class="layout">
+  <div>
+    <div class="video-panel">
+      <span class="sim-badge">SIMULATED FEED — NO DRONE CONNECTED</span>
+      <img src="/video_feed" alt="Drone camera feed">
+    </div>
+
+    <div class="controls">
+      <h2>Manual Control</h2>
+      <div class="pad">
+        <span></span><button data-cmd="forward">&#8593;</button><span></span>
+        <button data-cmd="left">&#8592;</button><button data-cmd="hover">&#9679;</button><button data-cmd="right">&#8594;</button>
+        <span></span><button data-cmd="back">&#8595;</button><span></span>
+      </div>
+      <div class="flight-row">
+        <button class="flight-btn" data-cmd="up">Up</button>
+        <button class="flight-btn" data-cmd="down">Down</button>
+      </div>
+      <div class="flight-row">
+        <button class="flight-btn" data-cmd="takeoff">Takeoff</button>
+        <button class="flight-btn" data-cmd="land">Land</button>
+      </div>
+      <div class="note" id="control-note">No drone connected yet — commands are logged only, not flown.</div>
+    </div>
+  </div>
+
+  <div class="alerts-panel">
+    <h2>Hazard Alerts</h2>
+    <div id="alerts-list"><div class="empty">No hazards detected</div></div>
+  </div>
+</div>
+
+<script>
+async function pollAlerts() {
+  try {
+    const res = await fetch('/alerts');
+    const data = await res.json();
+    document.getElementById('conn-status').textContent = 'connected';
+
+    const list = document.getElementById('alerts-list');
+    if (data.source_error) {
+      list.innerHTML = `<div class="source-error">${data.source_error}</div>`;
+      return;
+    }
+    if (!data.alerts.length) {
+      list.innerHTML = '<div class="empty">No hazards detected</div>';
+      return;
+    }
+    list.innerHTML = data.alerts.map(a => `
+      <div class="alert-card ${a.danger_level}">
+        <div class="alert-top">
+          <span class="alert-name">${a.display_name}</span>
+          <span class="level-chip ${a.danger_level}">${a.danger_level}</span>
+        </div>
+        <div class="alert-meta">confidence ${(a.confidence * 100).toFixed(0)}%</div>
+        <div class="alert-disclaimer">${a.disclaimer}</div>
+      </div>
+    `).join('');
+  } catch (e) {
+    document.getElementById('conn-status').textContent = 'disconnected';
+  }
+}
+
+async function sendCommand(cmd) {
+  const note = document.getElementById('control-note');
+  try {
+    const res = await fetch('/control', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({command: cmd}),
+    });
+    const data = await res.json();
+    note.textContent = `Last command: "${cmd}" — ${data.note}`;
+  } catch (e) {
+    note.textContent = 'Could not reach server.';
+  }
+}
+
+document.querySelectorAll('[data-cmd]').forEach(btn => {
+  btn.addEventListener('click', () => sendCommand(btn.dataset.cmd));
+});
+
+setInterval(pollAlerts, 700);
+pollAlerts();
+</script>
+</body>
+</html>

@@ -1,6 +1,7 @@
 """Runs the configured set of detectors over a frame and summarizes results."""
 
 from beach_drone_detection.pipeline.annotate import annotate_frame
+from beach_drone_detection.pipeline.hazards import alerts_from_detections
 
 
 class Pipeline:
@@ -17,19 +18,12 @@ class Pipeline:
         return detections_by_detector, annotated, summary
 
     def _summarize(self, detections_by_detector):
-        isolated = detections_by_detector.get("isolated_swimmer", [])
-        drowning = [
-            d for d in detections_by_detector.get("swimmer_distress", [])
-            if d.label == "drowning"
-        ]
-        encroaching = [
-            d for d in detections_by_detector.get("vessel_encroachment", [])
-            if d.extra.get("in_swim_zone")
-        ]
-        possible_distress = detections_by_detector.get("swimmer_distress_motion", [])
+        counts = {}
+        for alert in alerts_from_detections(detections_by_detector):
+            counts[alert["detector"]] = counts.get(alert["detector"], 0) + 1
         return {
-            "isolated_swimmers": len(isolated),
-            "drowning_alerts": len(drowning),
-            "vessel_encroachments": len(encroaching),
-            "possible_distress_motion_flags": len(possible_distress),
+            "isolated_swimmers": counts.get("isolated_swimmer", 0),
+            "drowning_alerts": counts.get("swimmer_distress", 0),
+            "vessel_encroachments": counts.get("vessel_encroachment", 0),
+            "possible_distress_motion_flags": counts.get("swimmer_distress_motion", 0),
         }
