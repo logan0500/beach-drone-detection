@@ -56,7 +56,7 @@ detectors:
     swim_zone_polygon: null
 
   water_quality:
-    enabled: true
+    enabled: false  # disabled for now — no trained model behind this one, focusing on the other 5
     # No trained model — classical HSV color thresholding for bloom-colored
     # regions instead. Untuned placeholders; expect false positives (foam,
     # glare, ordinary shallow-water color) until checked against real
